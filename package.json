@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.5.9",
+    "@react-navigation/native": "^6.1.8",
+    "expo": "^49.0.11",
+    "native-base": "^3.4.28",
+    "react": "18.2.0",
+    "react-native": "0.72.5"
+  }
+}
