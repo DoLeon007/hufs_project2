@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Linking, Image } from 'react-native';
 //npm install @react-navigation/bottom-tabs
 //npm install @react-navigation/native 후 밑에 import 실행 가능
 import { NavigationContainer} from '@react-navigation/native'; 
@@ -8,9 +8,21 @@ import { AntDesign } from '@expo/vector-icons';
 import { NativeBaseProvider } from "native-base";
 
 import { SearchScreen } from './screens/SearchScreen';
+import { KakaoLoginButton } from './screens/LoginScreen';
 import { LoginProfileScreen} from './screens/LoginProfileScreen';
 
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`;
+
 function HomeScreen() {
+
+  const handleKakaoLogin = () => {
+    // Linking 모듈을 사용하여 카카오 로그인 URL을 엽니다.
+    Linking.openURL(KAKAO_AUTH_URL)
+      .catch((error) => {
+        console.error('링크를 열 수 없음', error);
+      });
+  };
+
   return (
     <View style={{ 
         flex: 1, 
@@ -18,6 +30,7 @@ function HomeScreen() {
         alignItems: 'center', 
         backgroundColor: 'white'
     }}>
+      <Text onPress={handleKakaoLogin}>카카오계정 로그인</Text>
     </View>
   );
 }
