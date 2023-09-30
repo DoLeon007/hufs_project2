@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { ToggleButton } from 'react-native-paper';
 
-const LoginProfileScreen = () => {
+const LoginProfileScreen = ({ navigation }) => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [birthYear, setBirthYear] = useState('');
@@ -20,6 +20,7 @@ const LoginProfileScreen = () => {
     console.log("몸무게:", weight);
     console.log("태어난 연도:", birthYear);
     console.log("성별:", selectedGender);
+    navigation.navigate('LoginProfile2');
   };
 
   const [isButtonActive, setIsButtonActive] = useState(false);
@@ -116,6 +117,7 @@ const renderLabel = (label) => (
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor:'white',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',  
