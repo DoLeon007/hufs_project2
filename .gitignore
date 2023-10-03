@@ -1,7 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,react,reactnative
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,react,reactnative
-
 .env
+
 ### react ###
 .DS_*
 *.log

@@ -1,45 +1,39 @@
-import * as React from 'react';
-import { StyleSheet, Image, Text, View, Linking, TouchableOpacity } from 'react-native'; // TouchableOpacity를 import 추가
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AntDesign } from '@expo/vector-icons';
+import React from 'react';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code`;
+const WelcomeScreen = () => {
+  const navigation = useNavigation();
 
-export default function WelcomeScreen() {
   const handleKakaoLogin = () => {
-    Linking.openURL(KAKAO_AUTH_URL)
-      .catch((error) => {
-        console.error('링크를 열 수 없음', error);
-      });
+    // 카카오 로그인 버튼 누르면 "KakaoWebView"로 이동
+    navigation.navigate('KakaoWebView');
   };
 
   return (
-    <View style={{ 
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        backgroundColor: 'white'
-    }}>
-      <TouchableOpacity style={styles.container} onPress={handleKakaoLogin}>
-        <Image 
-        source={{uri:'https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png'}} 
-        alt='kakaoLogin'
-        style={[styles.imageStyle, { resizeMode: 'contain' }]}
-         />
+    <View style={styles.container}>
+      <TouchableOpacity onPress={handleKakaoLogin}>
+        <Image
+          source={{ uri: 'https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png' }}
+          style={styles.imageStyle}
+        />
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent:"center",
-    alignContent:"center"
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
   imageStyle: {
-    width:200,
-    height:200
-  }
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
 });
+
+export default WelcomeScreen;

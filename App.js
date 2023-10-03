@@ -1,7 +1,13 @@
 import React from 'react';
-import MainScreen from './screens/MainScreen';
-import WelcomeScreen from './screens/WelcomeScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import StackNavigator from './navigation/StackNavigator'
 
-export default function App(){
-  return (<WelcomeScreen/>)
+export default function App() {
+
+  console.disableYellowBox = true;
+
+  return ( 
+  <NavigationContainer>
+    <StackNavigator/>
+  </NavigationContainer>);
 }
