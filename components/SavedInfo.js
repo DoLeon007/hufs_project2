@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Text, Flex, Box } from "native-base";
 import { AntDesign } from '@expo/vector-icons';
-import { FlatList, TouchableWithoutFeedback } from 'react-native';  // <-- Modify this line
-
+import { FlatList, TouchableWithoutFeedback } from 'react-native';
+import axios from 'axios';
 
 const nutritionMapping = {
   sugar: "당류",
@@ -11,6 +11,9 @@ const nutritionMapping = {
 
 export const SavedInfoItem = ({ data, onSelect }) => {
   const [isStarred, setIsStarred] = useState(false);
+  const formatValue = (value) => {
+    return value % 1 === 0 ? Math.floor(value) : value;
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => onSelect(data)}>
@@ -37,11 +40,11 @@ export const SavedInfoItem = ({ data, onSelect }) => {
             <Flex {...styles.flexRow} mt={3}>
               <Flex direction="row">
                 <Text color="#848484">{nutritionMapping["sugar"]}: </Text> {/* 당류: */}
-                <Text color="#848484">{data["sugar"]}</Text>
+                <Text color="#848484">{formatValue(data["sugar"])}g</Text> {/* Updated this line */}
               </Flex>
               <Flex direction="row" ml={4}>
                 <Text color="#848484">{nutritionMapping["caffeine"]}: </Text> {/* 카페인: */}
-                <Text color="#848484">{data["caffeine"]}</Text>
+                <Text color="#848484">{formatValue(data["caffeine"])}mg</Text> {/* Updated this line */}
               </Flex>
             </Flex>
           </Flex>
@@ -72,24 +75,42 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
   };
 
   useEffect(() => {
-    let mockDataArray = [];
-
-    for (let i = 1; i <= 20; i++) {
-      mockDataArray.push({
-        manufacturer: `Sample ${i}`,
-        drinkName: `Sample Drink ${i}`,
-        sugar: `${5 + i}g`,
-        caffeine: `${50 + i}mg`,
-      });
-    }
-
-    setSavedData(mockDataArray);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://172.20.10.4:4000/drink');
+        
+        // 전체 데이터를 매핑. 화면에는 당류와 카페인만 표시되지만, 
+        // 다른 모든 데이터도 가져와서 상태에 저장.
+        const mappedData = response.data.map(item => ({
+          drinkName: item.d_name,
+          manufacturer: item.manuf,
+          sugar: item.sugar,
+          caffeine: item.caffeine,
+          id: item.d_id,
+          size: item.size,
+          kcal: item.kcal,
+          protein: item.protein,
+          natrium: item.natrium,
+          fat: item.fat,
+          grade: item.grade,
+          source: item.source
+        }));
+        setSavedData(mappedData);  
+      } catch (error) {
+        console.error("Error fetching drinks:", error);
+      }
+    };
+  
+    fetchData();
   }, []);
 
-  // 검색어를 사용하여 목록을 필터링합니다.
+  // 검색어를 사용하여 목록을 필터링
   const filteredData = searchTerm
-    ? savedData.filter(item => item.drinkName.toLowerCase().includes(searchTerm.toLowerCase()))
-    : savedData;
+  ? savedData.filter(item => 
+      item.drinkName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.manufacturer.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : savedData;
 
   return (
     <Flex
@@ -102,7 +123,7 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
     >
 
       <FlatList
-        data={filteredData} // 필터링된 데이터를 사용합니다.
+        data={filteredData} // 필터링된 데이터를 사용
         renderItem={({ item }) => <SavedInfoItem data={item} onSelect={handleItemSelect} />} 
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ alignItems: 'center', paddingBottom: 20 }}
