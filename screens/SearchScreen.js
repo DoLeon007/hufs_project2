@@ -11,7 +11,7 @@ function SearchBar({ onSearchChange }) {
         <View w="100%" alignItems="center" space={5} alignSelf="center">
             <HStack width="80%" space={3} alignItems="center">
                 <Input
-                    placeholder="찾으시는 음료를 검색해 보세요"
+                    placeholder="찾으시는 음료를 검색해 보세요" // Placeholder 수정
                     borderRadius="10"
                     py="2"
                     px="1"
@@ -48,4 +48,3 @@ export function SearchScreen({ navigation }) {
         </KeyboardAvoidingView>
     );
 }
-
