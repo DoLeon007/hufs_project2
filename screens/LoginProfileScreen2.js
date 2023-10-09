@@ -14,7 +14,6 @@ const RecommendationText = ({ sugarGrams }) => {
   const handleEditPress = () => {
     setIsEditing(true);
     inputRef.current.focus();
-    // 커서를 입력값의 오른쪽 끝으로 이동시킵니다.
     inputRef.current.setNativeProps({
       selection: { start: inputValue.length, end: inputValue.length }
     });
@@ -50,7 +49,7 @@ const RecommendationText = ({ sugarGrams }) => {
           <TextInput
             ref={inputRef}
             style={styles.gramInput}
-            placeholder={isEditing ? '' : sugarGrams.toString()} // 편집 중이면 placeholder를 빈 문자열로 설정합니다.
+            placeholder={isEditing ? '' : sugarGrams.toString()} 
             placeholderTextColor="black"
             keyboardType="numeric"
             value={inputValue}
