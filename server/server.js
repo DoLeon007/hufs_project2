@@ -74,6 +74,23 @@ app.get("/user", (req, res) => {
   });
 }); 
 
+// 인가코드 user테이블에 넘기는 코드
+app.post("/user", (req, res) => {
+  const { code } = req.body;
+
+  const sql = "INSERT INTO user (u_id, u_name, height, weight, age, sex, acttivity_level, u_sugar_gram) VALUES (?, 'd', 111, 111, 111, 'm', '111', 10)";
+  connection.query(sql, [code], (error, results, fields) => {
+    if (error) {
+      console.error("Error inserting authorization code: ", error);
+      res.status(500).send({ message: "Error inserting authorization code" });
+      return;
+    }
+    console.log("Authorization code inserted successfully.");
+    res.status(200).send({ message: "Authorization code saved to the database." });
+  });
+});
+
+
 //서버 구동
 
 app.listen(port, () => {
