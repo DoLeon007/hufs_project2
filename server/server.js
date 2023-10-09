@@ -78,7 +78,7 @@ app.get("/user", (req, res) => {
 app.post("/user", (req, res) => {
   const { code } = req.body;
 
-  const sql = "INSERT INTO user (u_id, u_name, height, weight, age, sex, acttivity_level, u_sugar_gram) VALUES (?, 'd', 111, 111, 111, 'm', '111', 10)";
+  const sql = "INSERT INTO user (u_id, u_name, height, weight, age, sex, activity_level, u_sugar_gram) VALUES (?, 'd', 111, 111, 111, 'm', '111', 10)";
   connection.query(sql, [code], (error, results, fields) => {
     if (error) {
       console.error("Error inserting authorization code: ", error);

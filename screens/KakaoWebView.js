@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
@@ -11,24 +11,27 @@ const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIE
 const KakaoWebView = () => {
   const navigation = useNavigation();
   const [code, setCode] = useState(null);
+  const [codeSent, setCodeSent] = useState(false); // 인가 코드를 이미 서버로 보냈는지 확인하는 상태 변수
 
-  const handleNavigationStateChange = async (newNavState) => {
+  useEffect(() => {
+    if (code && !codeSent) {
+      sendCodeToServer(code);
+      setCodeSent(true);
+      navigation.navigate('LoginHandlerScreen', { code }); // 로그인 처리 후 이동
+    }
+  }, [code, codeSent]);
+
+  const handleNavigationStateChange = (newNavState) => {
     const url = newNavState.url;
     if (url.includes('localhost:3000/auth/kakao/callback?code=')) {
       const extractedCode = url.split('=')[1];
       setCode(extractedCode);
-
-      // 인가 코드 서버로 전송
-      await sendCodeToServer(extractedCode);
-
-      // 로그인 처리 후 LoginHandlerScreen으로 이동
-      navigation.navigate('LoginHandlerScreen', { code: extractedCode });
     }
   };
 
   const sendCodeToServer = async (code) => {
     try {
-      const response = await fetch('http://10.10.0.75:4000/user', {
+      const response = await fetch('http://10.10.1.227:4000/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
