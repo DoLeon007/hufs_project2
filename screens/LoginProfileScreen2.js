@@ -1,11 +1,13 @@
-import React, { useRef, useState } from 'react'; 
+import React, { useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Keyboard, Text, StyleSheet, TouchableOpacity, View, SafeAreaView, TextInput } from 'react-native';
+import { sendUserDataToDatabase } from '../apiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Header = () => {
   return <Text style={styles.header}>프로필 작성</Text>;
 };
 
-const RecommendationText = ({ sugarGrams }) => {
+const RecommendationText = ({ sugarGrams, onSugarGramsChange }) => {
   const inputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -49,12 +51,14 @@ const RecommendationText = ({ sugarGrams }) => {
           <TextInput
             ref={inputRef}
             style={styles.gramInput}
-            placeholder={isEditing ? '' : sugarGrams.toString()} 
+            placeholder={isEditing ? '' : sugarGrams.toString()}
             placeholderTextColor="black"
             keyboardType="numeric"
             value={inputValue}
-            onChangeText={text => setInputValue(text)}
-          />
+            onChangeText={text => {
+              setInputValue(text);
+              onSugarGramsChange(text);  // Notify parent about the change
+            }} />
           <Text style={styles.gramText}>g</Text>
         </View>
         {isEditing ? (
@@ -78,7 +82,7 @@ const RecommendationText = ({ sugarGrams }) => {
 
 const Button = ({ handleSetProfile }) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.submitButton}
       onPress={handleSetProfile}
     >
@@ -88,6 +92,35 @@ const Button = ({ handleSetProfile }) => {
 };
 
 const LoginProfileScreen2 = ({ route, navigation }) => {
+  const userData = route.params.userData;
+  const handleSugarGramsChange = (newSugarGrams) => {
+    userData.u_sugar_gram = parseInt(newSugarGrams, 10);  //당류 편집시 업데이트
+  };
+
+  // 토큰 저장
+  const storeUserData = async () => {
+    try {
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+    } catch (e) {
+      console.error("Failed to save the data to the storage", e);
+    }
+  };
+
+  const handleSetProfile = async () => {
+    try {
+      // 데이터를 DB로 전송
+      await sendUserDataToDatabase(userData);
+
+      // 데이터를 AsyncStorage에 저장
+      await storeUserData();
+
+      // 데이터 전송 후 메인 화면
+      navigation.navigate('MainTabs');
+    } catch (error) {
+      console.error("Failed to set the user profile:", error);
+    }
+  };
+
   const navigateToTabs = () => {
     navigation.navigate('MainTabs');
   };
@@ -97,9 +130,12 @@ const LoginProfileScreen2 = ({ route, navigation }) => {
       <SafeAreaView style={styles.safeAreaContainer}>
         <View style={styles.container}>
           <Header />
-          <RecommendationText sugarGrams={route.params.sugarGrams} />
+          <RecommendationText
+            sugarGrams={route.params.sugarGrams}
+            onSugarGramsChange={handleSugarGramsChange}
+          />
           <Text style={styles.text3}>이 수치는 프로필 화면에서 수정하실 수 있습니다</Text>
-          <Button handleSetProfile={navigateToTabs} />
+          <Button handleSetProfile={handleSetProfile} />
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -153,7 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
-    marginTop: 15, 
+    marginTop: 15,
   },
   submitButtonText: {
     color: 'white',
@@ -174,7 +210,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   editText: {
-    color:'lightgray'
+    color: 'lightgray'
   }
 });
 
