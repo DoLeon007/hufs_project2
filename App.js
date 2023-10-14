@@ -10,6 +10,7 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import KakaoWebView from './screens/KakaoWebView';
 import { BookmarkScreen } from './screens/BookmarkScreen';
 import { SearchScreen } from './screens/SearchScreen';
+import LoginHandlerScreen from './screens/LoginHandlerScreen';
 import LoginProfileScreen from './screens/LoginProfileScreen'; 
 import LoginProfileScreen2 from './screens/LoginProfileScreen2'; 
 
@@ -99,13 +100,14 @@ function MyTabs() {
 
 function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="LoginProfile">
+    <Stack.Navigator initialRouteName="WelcomeScreen">
 
-      {/*<Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />*/}
-      {/*<Stack.Screen name="KakaoWebView" component={KakaoWebView} />*/}
-      <Stack.Screen name="LoginProfile" component={LoginProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+      <Stack.Screen name="KakaoWebView" component={KakaoWebView} />
+      <Stack.Screen name="LoginHandlerScreen" component={LoginHandlerScreen} />
+      {/* <Stack.Screen name="LoginProfile" component={LoginProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="LoginProfile2" component={LoginProfileScreen2} options={{ headerShown: false }} />
-      <Stack.Screen name="MainTabs" component={MyTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="MainTabs" component={MyTabs} options={{ headerShown: false }} /> */}
     </Stack.Navigator>
   );
 }

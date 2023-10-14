@@ -77,28 +77,21 @@ app.get("/user", (req, res) => {
   });
 }); 
 
+// 인가코드 user테이블에 넘기는 코드
 app.post("/user", (req, res) => {
-  console.log("Received user data:", req.body);
+  const { code } = req.body;
 
-  const { u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
-
-  const query = `
-    INSERT INTO hufs.user (u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  connection.query(query, [u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
-  (error, results, fields) => {
+  const sql = "INSERT INTO user (u_code, u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) VALUES (?, '777', 'd', 111, 111, 111, 'm', '111', 10)";
+  connection.query(sql, [code], (error, results, fields) => {
     if (error) {
-      console.error("Error inserting user data: ", error);
-      res.status(500).send({ message: "Error inserting user data" });
+      console.error("Error inserting authorization code: ", error);
+      res.status(500).send({ message: "Error inserting authorization code" });
       return;
     }
-    console.log("User data inserted successfully.");
-    res.status(201).send({ message: "User data inserted successfully." });
+    console.log("Authorization code inserted successfully.");
+    res.status(200).send({ message: "Authorization code saved to the database." });
   });
 });
-
 
 // 4. 즐겨찾기
 app.post("/favorite", (req, res) => {
