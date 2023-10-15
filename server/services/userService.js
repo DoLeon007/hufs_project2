@@ -1,12 +1,13 @@
-//const {userDao} = require("../models/userDao");
-const {userDao} = require("../server");
+const {getUserById} = require("../server");
+const {signUp} = require("../server");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const express = require("express");
 
-const signInKakao = async (kakaoToken) => {
+const signInKakao = async (accessToken) => {
     const result = await axios.getAdapter("https://kapi.kakao.com/v2/user/me", {
         headers: {
-            Authorization: `Bearer ${kakaoToken}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     });
     const {data} = result
@@ -15,10 +16,10 @@ const signInKakao = async (kakaoToken) => {
     
     if (!name || !kakaoId) throw new error("KEY_ERROR", 400);
 
-    const user = await userDao.getUserById(kakaoId);
+    const user = await getUserById(kakaoId);
 
     if(!user) {
-        await userDao.signUp(name, kakaoId);
+        await signUp(name, kakaoId);
     }
 
     return jwt.sign({kakao_id: user[0].kakao_id}, process.env.TOKENSECRET);
