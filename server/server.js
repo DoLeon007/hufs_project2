@@ -57,7 +57,7 @@ app.get("/drink", (req, res) => {
       return;
     }
     // 로그 추가: 응답 데이터를 콘솔에 출력
-    console.log("Response data for /drink: ", results);
+    //console.log("Response data for /drink: ", results);
     
     console.log("success");
     res.send(results);
@@ -77,19 +77,25 @@ app.get("/user", (req, res) => {
   });
 }); 
 
-// 인가코드 user테이블에 넘기는 코드
 app.post("/user", (req, res) => {
-  const { code } = req.body;
+  console.log("Received user data:", req.body);
 
-  const sql = "INSERT INTO user (u_code, u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) VALUES (?, '777', 'd', 111, 111, 111, 'm', '111', 10)";
-  connection.query(sql, [code], (error, results, fields) => {
+  const { u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
+
+  const query = `
+    INSERT INTO hufs.user (u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(query, [u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
+  (error, results, fields) => {
     if (error) {
-      console.error("Error inserting authorization code: ", error);
-      res.status(500).send({ message: "Error inserting authorization code" });
+      console.error("Error inserting user data: ", error);
+      res.status(500).send({ message: "Error inserting user data" });
       return;
     }
-    console.log("Authorization code inserted successfully.");
-    res.status(200).send({ message: "Authorization code saved to the database." });
+    console.log("User data inserted successfully.");
+    res.status(201).send({ message: "User data inserted successfully." });
   });
 });
 
@@ -117,7 +123,6 @@ app.post("/favorite", (req, res) => {
 
 
 //서버 구동
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

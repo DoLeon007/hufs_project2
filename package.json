@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@expo/config-plugins": "~7.2.2",
+    "@react-native-async-storage/async-storage": "1.18.2",
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
@@ -35,4 +36,3 @@
   },
   "proxy": "http://localhost:4000/"
 }
-

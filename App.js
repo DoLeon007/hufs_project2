@@ -100,14 +100,14 @@ function MyTabs() {
 
 function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="WelcomeScreen">
+    <Stack.Navigator initialRouteName="LoginProfile">
 
-      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+      {/* <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="KakaoWebView" component={KakaoWebView} />
-      <Stack.Screen name="LoginHandlerScreen" component={LoginHandlerScreen} />
-      {/* <Stack.Screen name="LoginProfile" component={LoginProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="LoginHandlerScreen" component={LoginHandlerScreen} /> */}
+      <Stack.Screen name="LoginProfile" component={LoginProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="LoginProfile2" component={LoginProfileScreen2} options={{ headerShown: false }} />
-      <Stack.Screen name="MainTabs" component={MyTabs} options={{ headerShown: false }} /> */}
+      <Stack.Screen name="MainTabs" component={MyTabs} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
