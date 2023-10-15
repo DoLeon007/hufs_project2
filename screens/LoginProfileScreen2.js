@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Keyboard, Text, StyleSheet, TouchableOpacity, View, SafeAreaView, TextInput } from 'react-native';
-import { sendUserDataToDatabase } from '../apiService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sendUserDataToDatabase, storeUserData } from '../apiService';
 
 const Header = () => {
   return <Text style={styles.header}>프로필 작성</Text>;
@@ -63,8 +62,8 @@ const RecommendationText = ({ sugarGrams, onSugarGramsChange }) => {
         </View>
         {isEditing ? (
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={styles.editButton} onPress={handleDonePress}>
-              <Text style={styles.editText}>완료</Text>
+            <TouchableOpacity style={styles.doneButton} onPress={handleDonePress}>
+              <Text style={styles.done}>완료</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.editButton} onPress={handleCancelPress}>
               <Text style={styles.editText}>취소</Text>
@@ -97,22 +96,13 @@ const LoginProfileScreen2 = ({ route, navigation }) => {
     userData.u_sugar_gram = parseInt(newSugarGrams, 10);  //당류 편집시 업데이트
   };
 
-  // 토큰 저장
-  const storeUserData = async () => {
-    try {
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
-    } catch (e) {
-      console.error("Failed to save the data to the storage", e);
-    }
-  };
-
   const handleSetProfile = async () => {
     try {
       // 데이터를 DB로 전송
       await sendUserDataToDatabase(userData);
 
       // 데이터를 AsyncStorage에 저장
-      await storeUserData();
+      await storeUserData(userData);
 
       // 데이터 전송 후 메인 화면
       navigation.navigate('MainTabs');
@@ -211,6 +201,18 @@ const styles = StyleSheet.create({
   },
   editText: {
     color: 'lightgray'
+  },
+  done: {
+    color: 'white',
+  },
+  doneButton: {
+    marginTop: 10,
+    marginHorizontal: 5,
+    padding: 7,
+    backgroundColor: '#9747FF',
+    borderColor: '#9747FF',
+    borderWidth: 1,
+    borderRadius: 5
   }
 });
 
