@@ -51,7 +51,7 @@ const LoginProfileScreen = ({ navigation }) => {
 
     const dailyIntake = standardWeight * activityMultiplier;
     const sugarIntakeKcal = parseFloat((dailyIntake * 0.1).toFixed(1));
-    const sugarIntakeGrams = parseFloat((sugarIntakeKcal / 4).toFixed(1));
+    const sugarIntakeGrams = Math.round(sugarIntakeKcal / 4);
 
     return {
       kcal: sugarIntakeKcal,
