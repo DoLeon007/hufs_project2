@@ -8,102 +8,150 @@ const NutritionInfoInput = ({ label, value, onChangeText }) => (
       {label}
     </Text>
     <Input
+      backgroundColor="#EEF1F4"
+      borderColor="#EEF1F4"
       flex={1.7}
       value={value}
       onChangeText={onChangeText}
-      keyboardType="decimal-pad" 
+      keyboardType="decimal-pad"
     />
   </Flex>
 );
 
 export const FormButton = () => {
   const [showModal, setShowModal] = useState(false);
+  const [warningVisible, setWarningVisible] = useState(false);
   const [manufacturer, setManufacturer] = useState("");
   const [drinkName, setDrinkName] = useState("");
+  const [size, setSize] = useState("");
+  const [kcal, setKcal] = useState("");
   const [sugar, setSugar] = useState("");
   const [caffeine, setCaffeine] = useState("");
-  const [carb, setCarb] = useState("");
   const [protein, setProtein] = useState("");
   const [fat, setFat] = useState("");
-  const [sodium, setSodium] = useState("");
-  
+  const [natruim, setNatruim] = useState("");
+
+  const inputFilled = () => {
+    return (
+      manufacturer &&
+      drinkName &&
+      size &&
+      kcal &&
+      sugar &&
+      caffeine &&
+      protein &&
+      fat &&
+      natruim
+    );
+  };
+
   const resetFields = () => {
     setManufacturer("");
     setDrinkName("");
+    setSize("");
+    setKcal("");
     setSugar("");
     setCaffeine("");
-    setCarb("");
     setProtein("");
     setFat("");
-    setSodium("");
+    setNatruim("");
+  };
+
+  const handleModalClose = () => {
+    resetFields();
+    setWarningVisible(false);
+    setShowModal(false);
   };
 
   const handleSubmit = () => {
-    console.log({
-      manufacturer,
-      drinkName,
-      sugar,
-      caffeine,
-      carb,
-      protein,
-      fat,
-      sodium,
-    });
+    if (inputFilled()) {
+      console.log({
+        manufacturer,
+        drinkName,
+        size,
+        kcal,
+        sugar,
+        caffeine,
+        protein,
+        fat,
+        natruim,
+      });
 
-    setShowModal(false);  
-    resetFields();  
+      setShowModal(false);
+      resetFields();
+      setWarningVisible(false);
+    } else {
+      setWarningVisible(true);
+    }
   };
 
   return (
     <>
-      <Button 
-        backgroundColor="white" 
+      <Button
+        backgroundColor="white"
         onPress={() => setShowModal(true)}>
         <AntDesign name="form" size={24} color="#9747FF" />
       </Button>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+      <Modal isOpen={showModal} onClose={handleModalClose}>
         <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-
+          <Modal.CloseButton onPress={handleModalClose} />
           <Modal.Body>
             <FormControl>
               <FormControl.Label>제조사명</FormControl.Label>
-              <Input value={manufacturer} onChangeText={setManufacturer} />
+              <Input
+                placeholder="내가 생성"
+                value={manufacturer}
+                onChangeText={setManufacturer}
+                backgroundColor="#EEF1F4"
+                borderColor="#EEF1F4"
+              />
             </FormControl>
             <FormControl mt="3">
-              <FormControl.Label>음료수명</FormControl.Label>
-              <Input value={drinkName} onChangeText={setDrinkName} />
+              <FormControl.Label>음료명</FormControl.Label>
+              <Input
+                value={drinkName}
+                onChangeText={setDrinkName}
+                backgroundColor="#EEF1F4"
+                borderColor="#EEF1F4"
+              />
             </FormControl>
             <FormControl mt="5">
-              <FormControl.Label>1회 섭취시 영양성분</FormControl.Label>
+              <FormControl.Label>제품 영양 정보</FormControl.Label>
               <Flex justifyContent="space-between" flexDirection="row">
-                <NutritionInfoInput label="당류(g)" value={sugar} onChangeText={setSugar}/>
-                <NutritionInfoInput label="카페인(mg)" value={caffeine} onChangeText={setCaffeine}/>
+                <NutritionInfoInput label="용량(ml)" value={size} onChangeText={setSize} />
+                <NutritionInfoInput label="열량(kcal)" value={kcal} onChangeText={setKcal} />
               </Flex>
               <Flex justifyContent="space-between" flexDirection="row" mt={2}>
-                <NutritionInfoInput label="탄수화물(g)" value={carb} onChangeText={setCarb}/>
-                <NutritionInfoInput label="단백질(g)" value={protein} onChangeText={setProtein}/>
+                <NutritionInfoInput label="당류(g)" value={sugar} onChangeText={setSugar} />
+                <NutritionInfoInput label="카페인(mg)" value={caffeine} onChangeText={setCaffeine} />
               </Flex>
               <Flex justifyContent="space-between" flexDirection="row" mt={2}>
-                <NutritionInfoInput label="지방(g)" value={fat} onChangeText={setFat}/>
-                <NutritionInfoInput label="나트륨(g)" value={sodium} onChangeText={setSodium}/>
+                <NutritionInfoInput label="단백질(g)" value={protein} onChangeText={setProtein} />
+                <NutritionInfoInput label="지방(g)" value={fat} onChangeText={setFat} />
               </Flex>
+              <Flex justifyContent="space-between" flexDirection="row" mt={2}>
+                <NutritionInfoInput label="나트륨(mg)" value={natruim} onChangeText={setNatruim} />
+              </Flex>
+
             </FormControl>
           </Modal.Body>
 
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button variant="ghost" onPress={() => {setShowModal(false); resetFields();}}>취소</Button>
-              <Button 
+          <Modal.Footer justifyContent="center" alignItems="center" borderTopWidth={0}>
+            {warningVisible && (
+              <Text color="red.500" fontSize="xs" mb={2}>모든 항목을 입력하세요</Text>
+            )}
+            <Button
+              width="60%"
+              borderRadius="30"
               bg='#9747FF'
               color='white'
-              onPress={handleSubmit}> 
-                저장
-              </Button>
-            </Button.Group>
+              onPress={handleSubmit}>
+              저장하기
+            </Button>
+
           </Modal.Footer>
-          
+
         </Modal.Content>
       </Modal>
     </>
