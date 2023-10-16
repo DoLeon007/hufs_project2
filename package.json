@@ -35,5 +35,15 @@
     "metro-react-native-babel-preset": "^0.77.0",
     "react-native-dotenv": "^3.4.9"
   },
-  "proxy": "http://localhost:4000/"
+  "proxy": "http://localhost:4000/",
+  "name": "hufs_project2",
+  "description": "",
+  "version": "1.0.0",
+  "main": "apiService.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "react-scripts start"
+  },
+  "author": "",
+  "license": "ISC"
 }

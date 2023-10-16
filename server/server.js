@@ -16,25 +16,20 @@ app.use(cors({
 }));
 // cors 권한 추가 설정: 실제 앱 등록시 외부 제약 방지
  
-//const data = fs.readFileSync('./db.json');
-//const conf = JSON.parse(data);
+const data = fs.readFileSync('./db.json');
+const conf = JSON.parse(data);
 
 const connection = mysql.createConnection({
-  //host: conf.host,
-  host: "database.cyx8acldzsid.ap-northeast-2.rds.amazonaws.com",
-   // RDS 엔드포인트
-  //user: conf.user,
-  user: "hufs",
-   // RDS 마스터 사용자 이름
-  //password: conf.password,
-  password: "hufsproject",
-   // RDS 비밀번호
-  //port: conf.port,
-  port: "3306",
-   // RDS 포트
-  //database: conf.database
-  database: "hufs"
-   // 데이터베이스 이름
+  host: conf.host,
+  // RDS 엔드포인트
+  user: conf.user,
+  //RDS 마스터 사용자 이름
+  password: conf.password,
+  // RDS 비밀번호
+  port: conf.port,
+  // RDS 포트
+  atabase: conf.database
+  // 데이터베이스 이름
 });
 
 //db 연결
@@ -104,14 +99,14 @@ const signUp = async (kakaoId, name) => {
 app.post("/user", (req, res) => {
   console.log("Received user data:", req.body);
 
-  const { u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
+  const { u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
 
   const query = `
-    INSERT INTO hufs.user (u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
+    INSERT INTO hufs.user (u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(query, [u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
+  connection.query(query, [u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
   (error, results, fields) => {
     if (error) {
       console.error("Error inserting user data: ", error);
@@ -120,6 +115,29 @@ app.post("/user", (req, res) => {
     }
     console.log("User data inserted successfully.");
     res.status(201).send({ message: "User data inserted successfully." });
+  });
+});
+
+//jwt 저장
+app.post("/user", (req, res) => {
+  console.log("Received jwt:", req.body);
+
+  const u_token = req.body;
+
+  const query = `
+    INSERT INTO hufs.user (u_token) 
+    VALUES (?u)
+  `;
+
+  connection.query(query, [u_token], 
+  (error, results, fields) => {
+    if (error) {
+      console.error("Error inserting jwt: ", error);
+      res.status(500).send({ message: "Error inserting jwt" });
+      return;
+    }
+    console.log("JWT inserted successfully.");
+    res.status(201).send({ message: "JWT inserted successfully." });
   });
 });
 
