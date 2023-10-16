@@ -1,6 +1,7 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://172.24.238.99:4000'; 
+const BASE_URL = 'http://172.24.238.84:4000'; 
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -9,6 +10,36 @@ const apiClient = axios.create({
   },
   timeout: 10000 
 });
+
+export const storeUserData = async (userData) => {
+    try {
+        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+    } catch (e) {
+        console.error("Failed to save the data to the storage", e);
+    }
+};
+
+export const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('@user_token');
+    console.log("Fetched token:", token);  // 로그를 찍는 부분
+    return token;
+  } catch (error) {
+    console.error("Error fetching token", error);
+  }
+};
+
+export const fetchUserData = async () => {
+    try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData !== null) {
+            return JSON.parse(userData);
+        }
+    } catch (e) {
+        console.error("Failed to fetch the data from the storage", e);
+    }
+    return null;  
+};
 
 export const getDrinkData = async () => {
   try {
