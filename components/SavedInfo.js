@@ -3,6 +3,32 @@ import { Text, Flex, Box } from "native-base";
 import { AntDesign } from '@expo/vector-icons';
 import { FlatList, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
+import { sendFavoriteDataToDatabase, getDrinkData } from "../apiService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const getToken = async () => {
+  try {
+    return await AsyncStorage.getItem('@user_token');
+  } catch (error) {
+    console.error("Error fetching token", error);
+  }
+};
+
+/*
+const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('@user_token');
+    if(!token) {
+      // 임의의 토큰을 반환
+      return "TEMPORARY_TOKEN";
+    }
+    return token;
+  } catch (error) {
+    console.error("Error fetching token", error);
+    return null; // or you can return a default/fallback token here
+  }
+}
+*/
 
 const nutritionMapping = {
   sugar: "당류",
@@ -14,6 +40,25 @@ export const SavedInfoItem = ({ data, onSelect }) => {
   const formatValue = (value) => {
     return value % 1 === 0 ? Math.floor(value) : value;
   }
+  const handleStarPress = async () => {
+    setIsStarred(!isStarred);
+  
+    const token = await getToken(); // 현재 로그인한 사용자의 토큰 가져오기
+  
+    if (!isStarred) {
+      // 즐겨찾기에 추가
+      try {
+        await sendFavoriteDataToDatabase({ user: token, drink: data.id }); // 토큰 사용
+        console.log("Added to favorites");
+      } catch (error) {
+        console.error("Error adding to favorites:", error);
+      }
+    } else {
+      // TODO: 즐겨찾기에서 제거 API 호출
+      console.log("Remove from favorites");
+    }
+  };
+
 
   return (
     <TouchableWithoutFeedback onPress={() => onSelect(data)}>
@@ -26,8 +71,9 @@ export const SavedInfoItem = ({ data, onSelect }) => {
               name={isStarred ? "star" : "staro"}
               size={28}
               color={isStarred ? "#FFD233" : "lightgray"}
-              onPress={() => setIsStarred(!isStarred)}
+              onPress={handleStarPress}
             />
+
           </Flex>
           {/* 텍스트 영역 */}
           <Flex width="70%" flexDirection="column">
@@ -60,7 +106,7 @@ export const SavedInfoItem = ({ data, onSelect }) => {
 
         </Flex>
       </Box>
-    </TouchableWithoutFeedback>  
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -69,7 +115,7 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
 
   const handleItemSelect = (itemData) => {
     console.log("Selected Item:", itemData);
-    if(onSelect) { 
+    if (onSelect) {
       onSelect(itemData);
     }
   };
@@ -77,11 +123,11 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://172.20.10.4:4000/drink');
-        
+        const responseData = await getDrinkData();  // apiService에서 가져온 함수 사용
+    
         // 전체 데이터를 매핑. 화면에는 당류와 카페인만 표시되지만, 
         // 다른 모든 데이터도 가져와서 상태에 저장.
-        const mappedData = response.data.map(item => ({
+        const mappedData = responseData.map(item => ({
           drinkName: item.d_name,
           manufacturer: item.manuf,
           sugar: item.sugar,
@@ -95,7 +141,8 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
           grade: item.grade,
           source: item.source
         }));
-        setSavedData(mappedData);  
+  
+        setSavedData(mappedData);
       } catch (error) {
         console.error("Error fetching drinks:", error);
       }
@@ -103,14 +150,15 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
   
     fetchData();
   }, []);
+  
 
   // 검색어를 사용하여 목록을 필터링
   const filteredData = searchTerm
-  ? savedData.filter(item => 
+    ? savedData.filter(item =>
       item.drinkName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.manufacturer.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  : savedData;
+    : savedData;
 
   return (
     <Flex
@@ -124,7 +172,7 @@ const SavedInfo = ({ searchTerm, onSelect }) => {
 
       <FlatList
         data={filteredData} // 필터링된 데이터를 사용
-        renderItem={({ item }) => <SavedInfoItem data={item} onSelect={handleItemSelect} />} 
+        renderItem={({ item }) => <SavedInfoItem data={item} onSelect={handleItemSelect} />}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ alignItems: 'center', paddingBottom: 20 }}
         onStartShouldSetResponderCapture={() => true}
