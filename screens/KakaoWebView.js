@@ -31,7 +31,7 @@ const KakaoWebView = () => {
 
   const sendCodeToServer = async (code) => {
     try {
-      const response = await fetch('http://localhost:4000/auth/kakao/signin', {
+      const response = await fetch('http://localhost:4000/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

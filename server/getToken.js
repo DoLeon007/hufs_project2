@@ -4,7 +4,7 @@ const {CLIENT_ID} = require("../screens/KakaoWebView");
 const {REDIRECT_URI} = require("../screens/KakaoWebView");
 const {userService} = require("../services/userService");
 
-app.get('/auth/kakao/signin', async(req, res) => {
+app.get('/user', async(req, res) => {
     const code = req.body;
     console.log("code: ", code);
     try{

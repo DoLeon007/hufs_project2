@@ -81,7 +81,7 @@ app.get("/user", (req, res) => {
 const getUserById = async(kakaoId) => {
   res.send(kakaoId)
   return await connection.query(
-      "SELECT u_id, u_name FROM hufs.users WHERE u_id=?",
+      "SELECT u_id, u_name FROM hufs.user WHERE u_id=?",
       [kakaoId]
   );
 
@@ -89,7 +89,7 @@ const getUserById = async(kakaoId) => {
 //kakao 로그인 -> 유저 추가
 const signUp = async (kakaoId, name) => {
   return await connection.query(
-      "INSERT INTO hufs.users(u_id, u_name) VALUES(?, ?)",
+      "INSERT INTO hufs.user(u_id, u_name) VALUES(?, ?)",
       [kakaoId, name]
   );
 }
