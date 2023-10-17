@@ -8,7 +8,7 @@ const REDIRECT_URI = "http://localhost:3000/auth/kakao/callback";
 
 const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
-const KakaoWebView = () => {
+const KakaoWebView = async () => {
   const navigation = useNavigation();
   const [code, setCode] = useState(null);
   const [codeSent, setCodeSent] = useState(false); // 인가 코드를 이미 서버로 보냈는지 확인하는 상태 변수
@@ -31,7 +31,7 @@ const KakaoWebView = () => {
 
   const sendCodeToServer = async (code) => {
     try {
-      const response = await fetch('http://192.168.0.8:4000/user', {
+      const response = await fetch('http://localhost:4000/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

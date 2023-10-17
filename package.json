@@ -11,9 +11,10 @@
     "css-select": "^5.1.0",
     "css-tree": "^2.3.1",
     "dotenv": "^16.3.1",
-    "expo": "^49.0.11",
+    "expo": "^49.0.13",
     "expo-constants": "~14.4.2",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.1",
     "native-base": "^3.4.28",
     "react": "18.2.0",
@@ -34,5 +35,15 @@
     "metro-react-native-babel-preset": "^0.77.0",
     "react-native-dotenv": "^3.4.9"
   },
-  "proxy": "http://localhost:4000/"
+  "proxy": "http://localhost:4000/",
+  "name": "hufs_project2",
+  "description": "",
+  "version": "1.0.0",
+  "main": "apiService.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "react-scripts start"
+  },
+  "author": "",
+  "license": "ISC"
 }

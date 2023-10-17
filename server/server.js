@@ -15,21 +15,21 @@ app.use(cors({
   optionSuccessStatus: 200,
 }));
 // cors 권한 추가 설정: 실제 앱 등록시 외부 제약 방지
-
+ 
 const data = fs.readFileSync('./db.json');
 const conf = JSON.parse(data);
 
 const connection = mysql.createConnection({
   host: conf.host,
-   // RDS 엔드포인트
+  // RDS 엔드포인트
   user: conf.user,
-   // RDS 마스터 사용자 이름
+  //RDS 마스터 사용자 이름
   password: conf.password,
-   // RDS 비밀번호
+  // RDS 비밀번호
   port: conf.port,
-   // RDS 포트
-  database: conf.database
-   // 데이터베이스 이름
+  // RDS 포트
+  atabase: conf.database
+  // 데이터베이스 이름
 });
 
 //db 연결
@@ -77,17 +77,37 @@ app.get("/user", (req, res) => {
   });
 }); 
 
+
+//kakao 로그인 -> 유저 리스트 확인
+const getUserById = async(u_name) => {
+  res.send(u_name)
+  return await connection.query(
+      "SELECT u_name FROM hufs.user WHERE u_name=?",
+      [u_name]
+  );
+
+}
+//kakao 로그인 -> 유저 추가
+const signUp = async (u_name) => {
+  return await connection.query(
+      "INSERT INTO hufs.user(u_name) VALUES(?)",
+      [u_name]
+  );
+}
+
+
+// 인가코드 user테이블에 넘기는 코드
 app.post("/user", (req, res) => {
   console.log("Received user data:", req.body);
 
-  const { u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
+  const { u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram } = req.body;
 
   const query = `
-    INSERT INTO hufs.user (u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
+    INSERT INTO hufs.user (u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(query, [u_token, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
+  connection.query(query, [u_code, u_name, height, weight, age, sex, activity_level, u_sugar_gram], 
   (error, results, fields) => {
     if (error) {
       console.error("Error inserting user data: ", error);
@@ -96,6 +116,29 @@ app.post("/user", (req, res) => {
     }
     console.log("User data inserted successfully.");
     res.status(201).send({ message: "User data inserted successfully." });
+  });
+});
+
+//jwt 저장
+app.post("/user", (req, res) => {
+  console.log("Received jwt:", req.body);
+
+  const u_token = req.body;
+
+  const query = `
+    INSERT INTO hufs.user (u_token) 
+    VALUES (?u)
+  `;
+
+  connection.query(query, [u_token], 
+  (error, results, fields) => {
+    if (error) {
+      console.error("Error inserting jwt: ", error);
+      res.status(500).send({ message: "Error inserting jwt" });
+      return;
+    }
+    console.log("JWT inserted successfully.");
+    res.status(201).send({ message: "JWT inserted successfully." });
   });
 });
 
@@ -126,3 +169,8 @@ app.post("/favorite", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+module.exports = {
+  getUserById,
+  signUp
+}
