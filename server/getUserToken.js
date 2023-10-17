@@ -23,8 +23,13 @@ const getToken = async(code) => {
         }
         })
 
-        const accessToken = authToken.data.accessToken;
+        const token = authToken.data;
+
+        const accessToken = authToken.data.access_token;
         //액세스토큰 발급
+        
+        //const refreshToken = authToken.data.refresh_token;
+        
 
         return res.status(200).json({accessToken: accessToken}); 
         //액세스토큰 리턴
