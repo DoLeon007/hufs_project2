@@ -47,20 +47,20 @@ const createJWT = async (accessToken) => {
             },
         });
         const {data} = result
-        const name = data.properties.nickname;
-        const kakaoId = data.id;
-        //회원 정보 [이름, 아이디]
+        const nickname = data.properties.nickname;
+        //const kakaoId = data.id;
+        //회원 정보
     
-        if (!name || !kakaoId) throw new error("KEY_ERROR", 400);
+        if (!nickname) throw new error("KEY_ERROR", 400);
 
-        const user = await getUserById(kakaoId);
+        const user = await getUserById(nickname);
         //기존 회원일 경우 회원정보 불러오기
 
         if(!user) {
-            await signUp(name, kakaoId);
+            await signUp(nickname);
         } //신규 회원일 경우 정보 저장
 
-        const userJWT = jwt.sign({kakao_id: user}, process.env.JWTSECRET);
+        const userJWT = jwt.sign({nickname: user}, process.env.JWTSECRET);
         return res.status(200).json({userJWT: userJWT});
         //jwt 발급 후 리턴
 

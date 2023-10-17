@@ -79,19 +79,19 @@ app.get("/user", (req, res) => {
 
 
 //kakao 로그인 -> 유저 리스트 확인
-const getUserById = async(kakaoId) => {
-  res.send(kakaoId)
+const getUserById = async(u_name) => {
+  res.send(u_name)
   return await connection.query(
-      "SELECT u_id, u_name FROM hufs.user WHERE u_id=?",
-      [kakaoId]
+      "SELECT u_name FROM hufs.user WHERE u_name=?",
+      [u_name]
   );
 
 }
 //kakao 로그인 -> 유저 추가
-const signUp = async (kakaoId, name) => {
+const signUp = async (u_name) => {
   return await connection.query(
-      "INSERT INTO hufs.user(u_id, u_name) VALUES(?, ?)",
-      [kakaoId, name]
+      "INSERT INTO hufs.user(u_name) VALUES(?)",
+      [u_name]
   );
 }
 
