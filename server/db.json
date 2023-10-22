@@ -1,0 +1,7 @@
+{
+    "host": "database.cyx8acldzsid.ap-northeast-2.rds.amazonaws.com",
+    "user" : "hufs",
+    "password" : "hufsproject",
+    "port" : "3306",
+    "database" : "hufs"
+} 

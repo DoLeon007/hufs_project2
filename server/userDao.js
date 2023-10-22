@@ -1,5 +1,8 @@
+//카카오 로그인 유저 db 조회 및 등록
+
 const axios = require("axios");
-//kakao 로그인 -> 유저 리스트 확인
+
+//kakao 로그인 -> 유저 id 등록 유무 확인
 const getUserById = async (u_id) => {
     try{
         const res = await axios.get('http://192.168.45.129:4000/auth/info', {
@@ -12,7 +15,7 @@ const getUserById = async (u_id) => {
 
         if(userId==""){
             console.log("user id is not exists")
-            return "null"
+            return "null" //미등록 유저면 null 반환
         } else{
             return userId
         }
@@ -38,7 +41,7 @@ const signUp = async (u_id, u_name) => {
         }).catch((err)=>{
             console.log(err)
         })
-        return req.data.result;
+        return req.data.result; //등록 res 반환
         
     } catch(e){
         console.error('Failed to sign up');

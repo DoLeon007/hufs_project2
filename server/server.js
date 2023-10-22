@@ -84,7 +84,7 @@ app.get("/auth/info", (req, res) => {
   connection.query(sql, (err, result) => {
     if(!err){
       console.log('User ID search complete');
-      res.status(201).send({ result });
+      res.status(201).send({ result }); //서치 결과 반환 null or data
     } else{
       console.log('err');
       res.send(err);
@@ -104,7 +104,7 @@ app.post("/auth/info", (req, res) => {
   connection.query(sql, [userId, userName], (err, result)=>{
     if(!err){
       console.log('successfully insert user info');
-      res.status(201).send({ result });
+      res.status(201).send({ result }); //등록 결과
     } else{
       console.log('err');
       res.status(500).send({ message: "Error inserting user info" });

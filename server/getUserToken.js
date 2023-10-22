@@ -1,8 +1,9 @@
+//액세스 토큰 발급 및 사용자 정보 요청
+
 const axios = require("axios");
 
-
-const CLIENT_ID = "695757edacbf01e55c4d269a9ff165ba";
-const REDIRECT_URI = "https://localhost:3000/auth/kakao/callback";
+const CLIENT_ID = "695757edacbf01e55c4d269a9ff165ba"; // 테스트용 rest api => 수정 필요
+const REDIRECT_URI = "https://localhost:3000/auth/kakao/callback"; //테스트용 redirect_uri => 수정 필요
 
 
 const getToken = async(code) => {
@@ -18,8 +19,8 @@ const getToken = async(code) => {
         }).catch(err => {
             console.log(err);
         })
-        const access_token = authToken.data.access_token;
-        return access_token;
+        const access_token = authToken.data.access_token; // 액세스 토큰
+        return access_token; 
 
     } catch(e){
         console.error('Failed to get access token');
@@ -35,7 +36,7 @@ const getInfo = async (access_token) => {
                 "Authorization": `Bearer ${access_token}`,
             },
         }).then((res)=>{                            
-            const userArray = [res.data.id, res.data.properties.nickname];
+            const userArray = [res.data.id, res.data.properties.nickname]; //사용자 정보 [카카오 고유id, 이름] 리턴
             return userArray;     
         }).catch(err => {
             console.log(err);
