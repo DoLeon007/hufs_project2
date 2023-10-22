@@ -31,7 +31,7 @@ const KakaoWebView = async () => {
 
   const sendCodeToServer = async (code) => {
     try {
-      const response = await fetch('http://192.168.45.129:4000/auth', {
+      const response = await fetch('http://192.168.45.129:8000/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
