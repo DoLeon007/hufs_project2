@@ -1,2 +1,5 @@
 #database
 /db.json
+
+#jwt_key
+/jwt.json

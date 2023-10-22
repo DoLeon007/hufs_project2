@@ -77,23 +77,42 @@ app.get("/user", (req, res) => {
   });
 }); 
 
+//kakao 로그인 -> 유저 등록 유무 확인
+app.get("/auth/info", (req, res) => {
+  const userId = req.query.user_id;
+  const sql = `SELECT u_id FROM hufs.user WHERE u_id=${userId}`
+  connection.query(sql, (err, result) => {
+    if(!err){
+      console.log('User ID search complete');
+      res.status(201).send({ result });
+    } else{
+      console.log('err');
+      res.send(err);
+    }
+  })
+})
 
-//kakao 로그인 -> 유저 리스트 확인
-const getUserById = async(u_name) => {
-  res.send(u_name)
-  return await connection.query(
-      "SELECT u_name FROM hufs.user WHERE u_name=?",
-      [u_name]
-  );
+//kakao 로그인 -> 신규 유저 등록
+app.post("/auth/info", (req, res) => {
+  const userId = req.body.user_id;
+  const userName = req.body.user_name;
+  const sql = `
+    INSERT INTO hufs.user (u_id, u_name) 
+    VALUES (?, ?)
+  `;
 
-}
-//kakao 로그인 -> 유저 추가
-const signUp = async (u_name) => {
-  return await connection.query(
-      "INSERT INTO hufs.user(u_name) VALUES(?)",
-      [u_name]
-  );
-}
+  connection.query(sql, [userId, userName], (err, result)=>{
+    if(!err){
+      console.log('successfully insert user info');
+      res.status(201).send({ result });
+    } else{
+      console.log('err');
+      res.status(500).send({ message: "Error inserting user info" });
+    }
+  })
+})
+
+
 
 
 // 인가코드 user테이블에 넘기는 코드
@@ -171,6 +190,6 @@ app.listen(port, () => {
 });
 
 module.exports = {
-  getUserById,
-  signUp
+  connection,
+  app
 }
