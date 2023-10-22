@@ -5,6 +5,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
 
+const {getToken} = require("./getUserToken");
+const {getInfo} = require("./getUserToken");
+const {createJWT} = require("./createJWT");
+
 const app = express();
 const port = process.env.port || 4000;
 
@@ -28,9 +32,13 @@ const connection = mysql.createConnection({
   // RDS 비밀번호
   port: conf.port,
   // RDS 포트
-  atabase: conf.database
+  database: conf.database,
   // 데이터베이스 이름
+  waitForConnections: true,
+  connectionLimit: 300,
+  queueLimit: 0,
 });
+
 
 //db 연결
 connection.connect((err) => {
@@ -77,14 +85,41 @@ app.get("/user", (req, res) => {
   });
 }); 
 
-//kakao 로그인 -> 유저 등록 유무 확인
+//kakao 로그인
+
+// 인가코드 => jwt 생성
+app.post("/auth", async (req, res, next) => {
+  console.log('Code sent from client to server:', req.body);
+  try{
+      const { code } = req.body; //인가코드
+      const access_token = await getToken(code); //액세스토큰 발급 함수 호출
+      console.log('Access Token:', access_token);
+
+      const userArray = await getInfo(access_token); //사용자 정보 요청 함수 호출
+      console.log('User Info:', userArray);
+
+      const userJWT = await createJWT(userArray); //jwt 생성 함수 호출
+      console.log('JWT:', userJWT);
+
+      return res.status(200).json(userJWT) //jwt 리턴(=>KakaoWebView.js sendCodeToServer res값)
+  } catch(e) {
+      console.error(e);
+
+      const errorData = {
+          message: "Internal server error",
+      };
+      return res.status(500).json(errorData);       
+  }
+});
+
+// 유저 등록 유무 확인
 app.get("/auth/info", (req, res) => {
   const userId = req.query.user_id;
   const sql = `SELECT u_id FROM hufs.user WHERE u_id=${userId}`
   connection.query(sql, (err, result) => {
     if(!err){
       console.log('User ID search complete');
-      res.status(201).send({ result }); //서치 결과 반환 null or data
+      res.status(201).send({ result });
     } else{
       console.log('err');
       res.send(err);
@@ -92,7 +127,7 @@ app.get("/auth/info", (req, res) => {
   })
 })
 
-//kakao 로그인 -> 신규 유저 등록
+// 신규 유저 등록
 app.post("/auth/info", (req, res) => {
   const userId = req.body.user_id;
   const userName = req.body.user_name;
@@ -104,15 +139,13 @@ app.post("/auth/info", (req, res) => {
   connection.query(sql, [userId, userName], (err, result)=>{
     if(!err){
       console.log('successfully insert user info');
-      res.status(201).send({ result }); //등록 결과
+      res.status(201).send({ result });
     } else{
       console.log('err');
       res.status(500).send({ message: "Error inserting user info" });
     }
   })
 })
-
-
 
 
 // 인가코드 user테이블에 넘기는 코드
@@ -138,28 +171,6 @@ app.post("/user", (req, res) => {
   });
 });
 
-//jwt 저장
-app.post("/user", (req, res) => {
-  console.log("Received jwt:", req.body);
-
-  const u_token = req.body;
-
-  const query = `
-    INSERT INTO hufs.user (u_token) 
-    VALUES (?u)
-  `;
-
-  connection.query(query, [u_token], 
-  (error, results, fields) => {
-    if (error) {
-      console.error("Error inserting jwt: ", error);
-      res.status(500).send({ message: "Error inserting jwt" });
-      return;
-    }
-    console.log("JWT inserted successfully.");
-    res.status(201).send({ message: "JWT inserted successfully." });
-  });
-});
 
 // 4. 즐겨찾기
 app.post("/favorite", (req, res) => {
